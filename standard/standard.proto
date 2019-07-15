@@ -1,0 +1,140 @@
+syntax = "proto3";
+
+package standard;
+
+// 状态
+enum State {
+  UNKNOWN         = 0 ; // 未知
+  SUCCESS         = 1 ; // 成功
+  FAILURE         = 2 ; // 失败
+  REPEAT          = 3 ; // 重复
+  CANCEL          = 4 ; // 取消
+  WAITING         = 5 ; // 等待
+  PROCEEDING      = 6 ; // 处理中
+  NOT_EXIST       = 7 ; // 不存在
+  UNDEFINED       = 8 ; // 未定义
+  PROHIBITED      = 9 ; // 被禁止
+  PARAMS_INVALID  = 10 ;   // 参数不合法
+  CHANNEL_INVALID = 11 ; // 无效的 Channel
+  DIAL_DB_FATLURE = 12 ; // DB 连接失败
+  DB_OPERATION_FATLURE = 13 ; // 数据库操作失败
+}
+
+// 设计简述
+// 输入/输出统一使用 probuf 格式
+// 上一个任务的输出结果可以是一个任务 并且会在 Next、Prior 上体现
+
+message Task {
+  uint64 ID      = 1 ; // 当前的任务 ID
+  uint64 Next    = 2 ; // 上一个任务 在 组合任务/任务链 里如果为 0 就是首任务
+  uint64 Prior   = 3 ; // 下一个任务 在 组合任务/任务链 里如果为 0 就是尾任务
+  uint64 Owner   = 4 ; // 所属用户
+  string State   = 5 ; // 任务状态
+  string Input   = 6 ; // 任务输入
+  string Output  = 7 ; // 任务输出
+  string Channel = 8 ; // 指定频道
+  string HashCode = 9 ; // 任务的唯一哈希码
+  uint64 RetryCount = 10 ; // 重试次数
+  string CreateTime = 11 ; // 创建时间
+  string UpdateTime = 12 ; // 更新时间
+  uint64 RetryMaxLimit = 13 ; // 最大重试次数
+}
+
+message CreateTaskRequest {
+  Task  Task   = 1 ; // 任务
+}
+
+message CreateTaskResponse {
+  State  State   = 1 ;
+  string Message = 2 ;
+  string Data = 3 ; // 任务的 HashCode
+}
+
+message QueryTaskByIDRequest {
+  uint64 ID  = 1 ;
+}
+
+message QueryTaskByIDResponse {
+  State  State   = 1 ;
+  string Message = 2 ;
+  Task   Data    = 3 ;
+}
+
+message QueryTaskByHashCodeRequest {
+  string HashCode = 1 ; // 任务的唯一哈希码
+}
+
+message QueryTaskByHashCodeResponse {
+  State  State   = 1 ;
+  string Message = 2 ;
+  Task   Data    = 3 ;
+}
+
+message QueryTaskByOwnerRequest {
+  uint64 Owner = 1 ; // 所属用户
+  uint64 Limit = 2 ;
+  uint64 Offset = 3 ;
+}
+
+message QueryTaskByOwnerResponse {
+  State  State   = 1 ;
+  string Message = 2 ;
+  uint64 Total = 3 ;
+  repeated Task Data = 4 ;
+}
+
+message CancelTaskByIDRequest {
+  uint64 ID  = 1 ;
+}
+
+message CancelTaskByIDResponse {
+  State  State   = 1 ;
+  string Message = 2 ;
+  repeated Task Data   = 3 ;
+}
+
+message QueryLengthByChannelRequest {
+  string Channel = 1 ; // 指定频道
+}
+
+message QueryLengthByChannelResponse {
+  State  State   = 1 ;
+  string Message = 2 ;
+  uint64 Data    = 3 ;
+}
+
+// 汇报任务处理结果
+message ReportTaskResultRequest {
+  uint64 ID      = 1 ; // 任务 ID
+  State  State   = 2 ; // 任务状态
+  string Output  = 3 ; // 任务输出
+}
+
+// 汇报任务的响应
+message ReportTaskResultResponse {
+  State  State   = 1 ;
+  string Message = 2 ;
+  uint64 Data    = 3 ;
+}
+
+// 领取任务
+message ReceiveQueueByChannelRequest {
+  string Channel = 1 ; // 指定频道
+}
+// 返回一个任务
+message ReceiveQueueByChannelResponse {
+  Task Tasks   = 1 ; // 任务
+}
+
+service Queues {
+  rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse){}                     // 创建任务
+  rpc QueryTaskByID(QueryTaskByIDRequest) returns (QueryTaskByIDResponse){}            // 查询任务
+  rpc CancelTaskByID(CancelTaskByIDRequest) returns (CancelTaskByIDResponse){}         // 取消任务
+  rpc QueryTaskByOwner(QueryTaskByOwnerRequest) returns (QueryTaskByOwnerResponse){}   // 查询任务
+  rpc QueryTaskByHashCode(QueryTaskByHashCodeRequest) returns (QueryTaskByHashCodeResponse){}   // 查询任务
+  rpc QueryLengthByChannel(QueryLengthByChannelRequest) returns (QueryLengthByChannelResponse){}   // 查询队列长度
+
+  rpc ReportTaskResult(stream ReportTaskResultRequest) returns (stream ReportTaskResultResponse){}   // 汇报结果
+  rpc ReceiveQueueByChannel(stream ReceiveQueueByChannelRequest) returns (stream ReceiveQueueByChannelResponse){}   // 领取任务 // 处理指定队列的任务
+
+}
