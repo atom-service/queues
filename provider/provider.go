@@ -5,8 +5,8 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/yinxulai/goutils/random"
-	"github.com/yinxulai/grpc-services/queues/models"
-	"github.com/yinxulai/grpc-services/queues/standard"
+	"github.com/grpcbrick/queues/models"
+	"github.com/grpcbrick/queues/standard"
 )
 
 // NewService NewService

@@ -1,6 +1,6 @@
 package models
 
-import "github.com/yinxulai/grpc-services/queues/standard"
+import "github.com/grpcbrick/queues/standard"
 
 // Task 任务
 type Task struct {

@@ -5,9 +5,9 @@ import (
 	"net"
 	"os"
 
+	"github.com/grpcbrick/queues/provider"
+	"github.com/grpcbrick/queues/standard"
 	"github.com/yinxulai/goutils/grpc/interceptor"
-	"github.com/yinxulai/grpc-services/queues/provider"
-	"github.com/yinxulai/grpc-services/queues/standard"
 	"google.golang.org/grpc"
 )
 
