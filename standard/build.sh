@@ -13,8 +13,9 @@ echo "[ ProtoPath ]:  $ProtoPath"
 cd $BasePath
 
 protoc  --proto_path=.  --go_out=plugins=grpc:.  *.proto
+protoc --doc_out=. --doc_opt=markdown,document.md *.proto
 
-protoc  --letmegrpc_out=. *.proto
-mv ./standard.letmegrpc.go  ./standard.test.go
+# protoc  --letmegrpc_out=. *.proto
+# mv ./standard.letmegrpc.go  ./standard.test.go
 
 echo "[  完成  ]"

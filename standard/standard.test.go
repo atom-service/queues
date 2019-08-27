@@ -3542,24 +3542,8 @@ if (json == undefined) {
 var s = '<div class="node" type="ReportTaskResultRequest_RootKeyword" fieldname="RootKeyword" repeated="false">';
 s += '<div class="field form-group"><label class="col-sm-2 control-label">ID: </label><div class="col-sm-10"><input class="form-control" name="ID" type="number" step="1" '+setValue(0, json["ID"])+'/></div></div>';
 				
-s += '<div class="field form-group"><label class="col-sm-2 control-label">State: </label><div class="col-sm-10">';
-					s += '<select class="form-control" name="State">';
-					s += 	'<option value="0" ' + selected(0, 0, json["State"]) + '>UNKNOWN</option>';
-						s += 	'<option value="1" ' + selected(0, 1, json["State"]) + '>SUCCESS</option>';
-						s += 	'<option value="2" ' + selected(0, 2, json["State"]) + '>FAILURE</option>';
-						s += 	'<option value="3" ' + selected(0, 3, json["State"]) + '>REPEAT</option>';
-						s += 	'<option value="4" ' + selected(0, 4, json["State"]) + '>CANCEL</option>';
-						s += 	'<option value="5" ' + selected(0, 5, json["State"]) + '>WAITING</option>';
-						s += 	'<option value="6" ' + selected(0, 6, json["State"]) + '>PROCEEDING</option>';
-						s += 	'<option value="7" ' + selected(0, 7, json["State"]) + '>NOT_EXIST</option>';
-						s += 	'<option value="8" ' + selected(0, 8, json["State"]) + '>UNDEFINED</option>';
-						s += 	'<option value="9" ' + selected(0, 9, json["State"]) + '>PROHIBITED</option>';
-						s += 	'<option value="10" ' + selected(0, 10, json["State"]) + '>PARAMS_INVALID</option>';
-						s += 	'<option value="11" ' + selected(0, 11, json["State"]) + '>CHANNEL_INVALID</option>';
-						s += 	'<option value="12" ' + selected(0, 12, json["State"]) + '>DIAL_DB_FATLURE</option>';
-						s += 	'<option value="13" ' + selected(0, 13, json["State"]) + '>DB_OPERATION_FATLURE</option>';
-						s += '</select></div></div>';
-					
+s += '<div class="field form-group"><label class="col-sm-2 control-label">State: </label><div class="col-sm-10"><input class="form-control" name="State" type="number" step="1" '+setValue(0, json["State"])+'/></div></div>';
+				
 s += '<div class="field form-group"><label class="col-sm-2 control-label">Output: </label><div class="col-sm-10"><input class="form-control" name="Output" type="text" '+setStrValue("", json["Output"])+'/></div></div>';
 				
 

@@ -1,33 +1,30 @@
-package provider
+package database
 
 import (
 	"bytes"
-	"os"
 
 	_ "github.com/go-sql-driver/mysql" // mysql 驱动
 	"github.com/jmoiron/sqlx"
-	"github.com/joho/godotenv"
+	"github.com/yinxulai/goutils/config"
 )
 
 var (
-	createQueuesTableStmt   *sqlx.Stmt
-	insertTaskByChannelStmt *sqlx.NamedStmt
-	countTaskByChannelStmt  *sqlx.NamedStmt
-	updateTaskByIDStmt      *sqlx.NamedStmt
-	deleteTaskByIDStmt      *sqlx.NamedStmt
-	queryTaskByIDStmt       *sqlx.NamedStmt
-	queryTaskByOwnerStmt    *sqlx.NamedStmt
-	queryTaskByHashCodeStmt *sqlx.NamedStmt
-	countTaskByHashCodeStmt *sqlx.NamedStmt
-	countTaskByIDStmt       *sqlx.NamedStmt
-	countTaskByOwnerStmt    *sqlx.NamedStmt
+	createQueuesTableStmt        *sqlx.Stmt
+	InsertTaskByChannelNamedStmt *sqlx.NamedStmt
+	CountTaskByChannelNamedStmt  *sqlx.NamedStmt
+	UpdateTaskByIDNamedStmt      *sqlx.NamedStmt
+	DeleteTaskByIDNamedStmt      *sqlx.NamedStmt
+	QueryTaskByIDNamedStmt       *sqlx.NamedStmt
+	QueryTaskByOwnerNamedStmt    *sqlx.NamedStmt
+	QueryTaskByHashCodeNamedStmt *sqlx.NamedStmt
+	CountTaskByHashCodeNamedStmt *sqlx.NamedStmt
+	CountTaskByIDNamedStmt       *sqlx.NamedStmt
+	CountTaskByOwnerNamedStmt    *sqlx.NamedStmt
 )
 
-func init() {
+func Init() {
 	var err error
-	godotenv.Load()
-
-	database, err := sqlx.Connect("mysql", os.Getenv("MYSQL_DB_URI"))
+	database, err := sqlx.Connect("mysql", config.MustGet("mysql"))
 	if err != nil {
 		panic(err)
 	}
@@ -61,7 +58,7 @@ func init() {
 		panic(err)
 	}
 
-	insertTaskByChannelStmt = MustPreparexNamed(
+	InsertTaskByChannelNamedStmt = MustPreparexNamed(
 		database,
 		" INSERT INTO `queues`",
 		" (`ID`, `Next`, `Prior`, `Owner`, `Input`, `HashCode`, `Channel`, `RetryMaxLimit`)",
@@ -70,34 +67,34 @@ func init() {
 		" ;",
 	)
 
-	countTaskByChannelStmt = MustPreparexNamed(
+	CountTaskByChannelNamedStmt = MustPreparexNamed(
 		database,
 		" SELECT COUNT(*) FROM `queues`",
 		" WHERE `Channel` = :Channel ;",
 	)
 
-	countTaskByIDStmt = MustPreparexNamed(
+	CountTaskByIDNamedStmt = MustPreparexNamed(
 		database,
 		" SELECT COUNT(*) FROM `queues`",
 		" WHERE `ID` = :ID",
 		" ;",
 	)
 
-	countTaskByOwnerStmt = MustPreparexNamed(
+	CountTaskByOwnerNamedStmt = MustPreparexNamed(
 		database,
 		" SELECT COUNT(*) FROM `queues`",
 		" WHERE `Owner` = :Owner",
 		" ;",
 	)
 
-	countTaskByHashCodeStmt = MustPreparexNamed(
+	CountTaskByHashCodeNamedStmt = MustPreparexNamed(
 		database,
 		" SELECT COUNT(*) FROM `queues`",
 		" WHERE `HashCode` = :HashCode",
 		" ;",
 	)
 
-	updateTaskByIDStmt = MustPreparexNamed(
+	UpdateTaskByIDNamedStmt = MustPreparexNamed(
 		database,
 		" UPDATE `queues` SET",
 		" `State` = :State,",
@@ -107,28 +104,28 @@ func init() {
 		" ;",
 	)
 
-	deleteTaskByIDStmt = MustPreparexNamed(
+	DeleteTaskByIDNamedStmt = MustPreparexNamed(
 		database,
 		" DELETE FROM `queues`",
 		" WHERE`ID` = :ID",
 		" ;",
 	)
 
-	queryTaskByIDStmt = MustPreparexNamed(
+	QueryTaskByIDNamedStmt = MustPreparexNamed(
 		database,
 		" SELECT * FROM `queues`",
 		" WHERE `ID` = :ID",
 		" ;",
 	)
 
-	queryTaskByHashCodeStmt = MustPreparexNamed(
+	QueryTaskByHashCodeNamedStmt = MustPreparexNamed(
 		database,
 		" SELECT * FROM `queues`",
 		" WHERE `HashCode` = :HashCode",
 		" ;",
 	)
 
-	queryTaskByOwnerStmt = MustPreparexNamed(
+	QueryTaskByOwnerNamedStmt = MustPreparexNamed(
 		database,
 		" SELECT * FROM `queues`",
 		" WHERE `Owner` = :Owner",

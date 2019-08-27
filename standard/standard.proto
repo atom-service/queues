@@ -2,23 +2,6 @@ syntax = "proto3";
 
 package standard;
 
-// 状态
-enum State {
-  UNKNOWN         = 0 ; // 未知
-  SUCCESS         = 1 ; // 成功
-  FAILURE         = 2 ; // 失败
-  REPEAT          = 3 ; // 重复
-  CANCEL          = 4 ; // 取消
-  WAITING         = 5 ; // 等待
-  PROCEEDING      = 6 ; // 处理中
-  NOT_EXIST       = 7 ; // 不存在
-  UNDEFINED       = 8 ; // 未定义
-  PROHIBITED      = 9 ; // 被禁止
-  PARAMS_INVALID  = 10 ;   // 参数不合法
-  CHANNEL_INVALID = 11 ; // 无效的 Channel
-  DIAL_DB_FATLURE = 12 ; // DB 连接失败
-  DB_OPERATION_FATLURE = 13 ; // 数据库操作失败
-}
 
 // 设计简述
 // 输入/输出统一使用 probuf 格式
@@ -45,7 +28,7 @@ message CreateTaskRequest {
 }
 
 message CreateTaskResponse {
-  State  State   = 1 ;
+  uint64  State   = 1 ;
   string Message = 2 ;
   string Data = 3 ; // 任务的 HashCode
 }
@@ -55,7 +38,7 @@ message QueryTaskByIDRequest {
 }
 
 message QueryTaskByIDResponse {
-  State  State   = 1 ;
+  uint64  State   = 1 ;
   string Message = 2 ;
   Task   Data    = 3 ;
 }
@@ -65,7 +48,7 @@ message QueryTaskByHashCodeRequest {
 }
 
 message QueryTaskByHashCodeResponse {
-  State  State   = 1 ;
+  uint64  State   = 1 ;
   string Message = 2 ;
   Task   Data    = 3 ;
 }
@@ -77,7 +60,7 @@ message QueryTaskByOwnerRequest {
 }
 
 message QueryTaskByOwnerResponse {
-  State  State   = 1 ;
+  uint64  State   = 1 ;
   string Message = 2 ;
   uint64 Total = 3 ;
   repeated Task Data = 4 ;
@@ -88,7 +71,7 @@ message CancelTaskByIDRequest {
 }
 
 message CancelTaskByIDResponse {
-  State  State   = 1 ;
+  uint64  State   = 1 ;
   string Message = 2 ;
   repeated Task Data   = 3 ;
 }
@@ -98,7 +81,7 @@ message QueryLengthByChannelRequest {
 }
 
 message QueryLengthByChannelResponse {
-  State  State   = 1 ;
+  uint64  State   = 1 ;
   string Message = 2 ;
   uint64 Data    = 3 ;
 }
@@ -106,13 +89,13 @@ message QueryLengthByChannelResponse {
 // 汇报任务处理结果
 message ReportTaskResultRequest {
   uint64 ID      = 1 ; // 任务 ID
-  State  State   = 2 ; // 任务状态
+  uint64  State   = 2 ; // 任务状态
   string Output  = 3 ; // 任务输出
 }
 
 // 汇报任务的响应
 message ReportTaskResultResponse {
-  State  State   = 1 ;
+  uint64  State   = 1 ;
   string Message = 2 ;
   uint64 Data    = 3 ;
 }
@@ -136,5 +119,4 @@ service Queues {
 
   rpc ReportTaskResult(stream ReportTaskResultRequest) returns (stream ReportTaskResultResponse){}   // 汇报结果
   rpc ReceiveQueueByChannel(stream ReceiveQueueByChannelRequest) returns (stream ReceiveQueueByChannelResponse){}   // 领取任务 // 处理指定队列的任务
-
 }
