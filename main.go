@@ -11,9 +11,11 @@ import (
 	"google.golang.org/grpc"
 )
 
+// 队列不是一个高读写并发的东西
+
 func init() {
-	config.SetStandard("mysql", "", true, "RPC 使用的 MYSQL 数据库配置")
-	config.SetStandard("port", ":3000", true, "RPC 服务监听的端口")
+	config.SetStandard("rpc_port", "", true, "RPC 使用的 MYSQL 数据库配置")
+	config.SetStandard("mysql_url", ":3000", true, "RPC 服务监听的端口")
 }
 
 func main() {
